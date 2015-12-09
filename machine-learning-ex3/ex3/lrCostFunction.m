@@ -27,6 +27,19 @@ grad = zeros(size(theta));
 %       prediction for that example. You can make use of this to vectorize
 %       the cost function and gradient computations. 
 %
+
+% X = 5000 * 400
+% theta = 400 * 1
+% y = 5000 * 1
+% h = 5000 * 1
+
+h = sigmoid(X * theta);
+temp = theta;
+temp(1) = 0;
+
+J = (1/m) * sum(-y .* log(h) - (1-y) .* log(1-h));
+J = J + lambda * (1/m) * (1/2) * sum(temp.^2);
+
 % Hint: When computing the gradient of the regularized cost function, 
 %       there're many possible vectorized solutions, but one solution
 %       looks like:
@@ -35,18 +48,8 @@ grad = zeros(size(theta));
 %           temp(1) = 0;   % because we don't add anything for j = 0  
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
-
-
-
-
-
-
-
-
-
-
+grad = (1/m) * (X' * (h - y));
+grad = grad + lambda * (1/m) * temp;
 % =============================================================
-
 grad = grad(:);
-
 end
