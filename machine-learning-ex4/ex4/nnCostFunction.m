@@ -45,8 +45,14 @@ for i=1:num_labels
 	yTruthVal(:,i) = (y == i);
 end
 
-h = sigmoid(Theta2 * [ ones(m,1), sigmoid(X * Theta1') ]');
-J = sum(sum( (1/m) * ( -log(h)' .* yTruthVal  -( log(1 - h) )' .* ( 1 -yTruthVal) ) )); 
+a1 = X;
+z2 = X * Theta1';
+a2 = [ ones(m,1), sigmoid(z2) ];
+z3 = Theta2 * a2';
+a3 = sigmoid(z3);
+h = a3';
+
+J = sum(sum( (1/m) * ( -log(h) .* yTruthVal  -( log(1 - h) ) .* ( 1 -yTruthVal) ) )); 
 
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
@@ -63,11 +69,25 @@ J = sum(sum( (1/m) * ( -log(h)' .* yTruthVal  -( log(1 - h) )' .* ( 1 -yTruthVal
 %               over the training examples if you are implementing it for the 
 %               first time.
 
-for i=1:100
-	for j=1:100
+% for i=1:num_labels
+	% for j=1:m
+  % end
+% end
 
-	end
-end
+d3 = h - yTruthVal; 
+d2 = (d3 * Theta2(:,2:end)) .*sigmoidGradient(z2);
+
+% disp('z2')
+% disp(size(a2'))
+% disp('d3')
+% disp(size(d3))
+
+delta_1 = a1' * d2;  
+delta_2 = a2' * d3;  
+
+
+Theta2_grad = (1/m) * delta_2';
+Theta1_grad = (1/m) * delta_1';
 
 % Part 3: Implement regularization with the cost function and gradients.
 %
@@ -77,30 +97,15 @@ end
 %               and Theta2_grad from Part 2.
 %
 
+% disp(size(Theta2_grad))
+% disp(size(Theta2))
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + (lambda/m) * Theta1(:,2:end);
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + (lambda/m) * Theta2(:,2:end);
+
 J = J  + lambda * (1/2) * (1/m) * ( sum(sum(Theta2(:,2:end).^2)) + sum(sum(Theta1(:,2:end).^2)) );
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------
 
 % =========================================================================
-
 % Unroll gradients
 grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
-
 end
